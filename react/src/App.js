@@ -5,23 +5,30 @@ function App() {
   const [name,setName] = useState('');
   const [datetime,setDatetime] = useState('');
   const [description,setDescription] = useState('');
-  function addNewTransaction(ev){
+  async function addNewTransaction(ev){
       ev.preventDefault(); // kontra od defaultnog
-      const url=process.env.REACT_APP_API_URL+'/transaction';
-      console.log(url);
-      fetch(url,{
-        method:'POST',
-        headers:{'Content-Type:':'application/json'},
+      const URL=process.env.REACT_APP_API_URL+'/transaction';
+     
+    try{
+        const response = await fetch(URL,{
+        method: 'POST',
+        headers:{'Content-Type':'application/json'},
         body: JSON.stringify({name,description,datetime})
-      }).then(response=>{
-        response.json().then(json=>{
-          console.log('result',json);
-        });
-      });
+      }); 
+
+      if(!response.ok)  //vraca status da li je ok sve proslo
+        throw new Error('Network response was not OK!');
+
+      const json = await response.json();
+      console.log(json);
+    }
+    catch(error){
+      console.log('Fetchh error:',error);
+    }
   }
 
 
-  return (
+  return(
     <main>
       <h1>$400<span>.00</span></h1>
       <form onSubmit={addNewTransaction}>
