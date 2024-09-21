@@ -8,22 +8,31 @@ function App() {
   async function addNewTransaction(ev){
       ev.preventDefault(); // kontra od defaultnog
       const URL=process.env.REACT_APP_API_URL+'/transaction';
-     
+      const price = name.split(' ')[0];
     try{
         const response = await fetch(URL,{
         method: 'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({name,description,datetime})
+        body: JSON.stringify({
+          price,
+          name: name.substring(price.length+1),
+          description,
+          datetime,
+        })
       }); 
 
       if(!response.ok)  //vraca status da li je ok sve proslo
         throw new Error('Network response was not OK!');
 
       const json = await response.json();
+      setName("");
+      setDatetime("");
+      setDescription(""); 
       console.log(json);
+
     }
     catch(error){
-      console.log('Fetchh error:',error);
+      console.log('Fetch error:',error);
     }
   }
 
