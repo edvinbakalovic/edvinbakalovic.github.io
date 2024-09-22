@@ -1,15 +1,29 @@
 import './App.css';
-import {useState} from "react";
+import {useState,useEffect} from "react";
 
 function App() {
   const [name,setName] = useState('');
   const [datetime,setDatetime] = useState('');
   const [description,setDescription] = useState('');
+  const [transactions,setTransactions] = useState([]);
+  
+  useEffect(()=>{
+    getTransactions().then(transaction=>{
+      setTransactions(transaction);
+    })
+  },[]);
+  
+  async function getTransactions(){
+    const URL = process.env.REACT_APP_API_URL+'/transactions';
+    const response = await fetch(URL);
+    return await response.json(); 
+  }
+  
   async function addNewTransaction(ev){
-      ev.preventDefault(); // kontra od defaultnog
+    ev.preventDefault(); // kontra od defaultnog
       const URL=process.env.REACT_APP_API_URL+'/transaction';
       const price = name.split(' ')[0];
-    try{
+      try{
         const response = await fetch(URL,{
         method: 'POST',
         headers:{'Content-Type':'application/json'},
@@ -20,26 +34,30 @@ function App() {
           datetime,
         })
       }); 
-
+      
       if(!response.ok)  //vraca status da li je ok sve proslo
-        throw new Error('Network response was not OK!');
-
+      throw new Error('Network response was not OK!');
+      
       const json = await response.json();
       setName("");
       setDatetime("");
       setDescription(""); 
       console.log(json);
-
+      
     }
     catch(error){
       console.log('Fetch error:',error);
     }
   }
-
-
+  
+  let balance = 0;
+  for(const transaction of transactions){
+    balance +=transaction.price;
+  }
+  balance=balance.toFixed(2);
   return(
     <main>
-      <h1>$400<span>.00</span></h1>
+      <h1>${balance}</h1>
       <form onSubmit={addNewTransaction}>
         <div className="basic">
         <input type="text" 
@@ -70,42 +88,20 @@ function App() {
       </form>
 
       <div className="transactions">
-        <div className="transaction">
+        {transactions.length > 0 && transactions.map(transaction=>{
+          return(
+          <div className="transaction">
           <div className="left">
-            <div className="name">New Samsung TV</div>
-            <div className="description">It waas time for new tw</div>
+            <div className="name">{transaction.name}</div>
+            <div className="description">{transaction.description}</div>
           </div>
           <div className="rigth">
-            <div className="price red">-$500</div>
-            <div className="datetime">2022-12-18 15:45</div>
+            <div className={"price " + (transaction.price<0 ? "red" : "green")}>{transaction.price}$</div>
+            <div className="datetime">{transaction.datetime}</div>
           </div>
         </div>
-      </div>
-
-      <div className="transactions">
-        <div className="transaction">
-          <div className="left">
-            <div className="name">GIg job new website</div>
-            <div className="description">It waas time for new tw</div>
-          </div>
-          <div className="rigth">
-            <div className="price green">+$400</div>
-            <div className="datetime">2022-12-18 15:45</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="transactions">
-        <div className="transaction">
-          <div className="left">
-            <div className="name">IPhone</div>
-            <div className="description">It waas time for new tw</div>
-          </div>
-          <div className="rigth">
-            <div className="price red">-$900</div>
-            <div className="datetime">2022-12-18 15:45</div>
-          </div>
-        </div>
+       )})}
+        
       </div>
     </main>
   );

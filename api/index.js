@@ -21,6 +21,12 @@ app.post('/api/transaction',async(req,res)=>{
     res.json(transaction);
 });
 
+app.get('/api/transactions',async (req,res)=>{
+    await mongoose.connect(process.env.MONGO_URL);
+    const transaction = await Transaction.find();
+    res.json(transaction);
+});
+
 
 
 const port = 4000;
