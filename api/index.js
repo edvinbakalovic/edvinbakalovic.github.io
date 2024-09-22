@@ -27,11 +27,7 @@ app.get('/api/transactions',async (req,res)=>{
     res.json(transaction);
 });
 
-
-
 const port = 4000;
 app.listen(port,()=>console.log(`Port je: ${port}`));
 
 //nodemon index.js koristi se za automatsko postavljanje novog sadrzaja, bez pokretanja index.js
-
-//fY15Y9cwkpwtLSUd

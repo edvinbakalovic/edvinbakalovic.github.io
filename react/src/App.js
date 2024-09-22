@@ -55,6 +55,7 @@ function App() {
     balance +=transaction.price;
   }
   balance=balance.toFixed(2);
+
   return(
     <main>
       <h1>${balance}</h1>
@@ -64,14 +65,12 @@ function App() {
         value={name} 
         onChange={el=>{
           setName(el.target.value);
-          //console.log(name);
         }}
         placeholder={'+200 new samsung tv'} />
         <input type="datetime-local" 
         value={datetime}
         onChange={el=>{
           setDatetime(el.target.value);
-          //console.log(datetime);
         }} />
         </div>
 
@@ -80,7 +79,6 @@ function App() {
           value={description}
           onChange={el=>{
             setDescription(el.target.value);
-            //console.log(description);
           }} />
         </div>
 
